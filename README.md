@@ -8,6 +8,7 @@
 - [Vite](https://vite.dev/) + [Svelte 5](https://svelte.dev/)（runes: `$state` / `$derived` / `$effect`）
 - 依存ゼロの最小ハッシュルーター（`#/<tool-id>`）
 - 静的ホスティング向け（ビルド成果物は `dist/`）
+- Lint: [ESLint](https://eslint.org/) + [eslint-plugin-svelte](https://sveltejs.github.io/eslint-plugin-svelte/) / Format: [Prettier](https://prettier.io/) + prettier-plugin-svelte
 
 ## 開発
 
@@ -17,6 +18,22 @@ npm run dev      # 開発サーバ（http://localhost:5173）
 npm run build    # 本番ビルド → dist/
 npm run preview  # ビルド成果物をローカル確認
 ```
+
+## コード品質（Lint / Format）
+
+[ESLint](https://eslint.org/) と [Prettier](https://prettier.io/) を導入しています。
+役割を分離し、Lint（問題検出）は ESLint、Format（整形）は Prettier が担当します。
+`eslint-config-prettier` を有効化しているため、両者の整形ルールは競合しません。
+
+```bash
+npm run lint     # チェックのみ（prettier --check + eslint）。CI 向けで書き換えなし
+npm run format   # Prettier による自動整形（prettier --write）
+```
+
+- `.svelte` ファイル（テンプレート + runes）も含めて解析・整形されます。
+  Svelte 公式が推奨する `eslint-plugin-svelte` / `prettier-plugin-svelte` を使用しています。
+- 設定: [eslint.config.js](eslint.config.js)（ESLint flat config） / [.prettierrc](.prettierrc) / [.prettierignore](.prettierignore)
+- コードスタイル: インデント2スペース、シングルクォート、セミコロンあり、行幅100。
 
 ## ディレクトリ構成
 
