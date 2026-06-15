@@ -50,8 +50,8 @@
         class="delete-btn"
         onclick={() => handleDelete(note.id)}
         aria-label="削除"
-        title="削除"
-      >×</button>
+        title="削除">×</button
+      >
     </li>
   {/each}
 </ul>

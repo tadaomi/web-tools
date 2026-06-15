@@ -34,7 +34,7 @@ export function deriveTitle(content) {
     .map((line) => line.trim())
     .find((line) => line.length > 0);
   if (!firstLine) return '無題のメモ';
-  return firstLine.length > 40 ? firstLine.slice(0, 40) + '…' : firstLine;
+  return firstLine.length > 40 ? `${firstLine.slice(0, 40)}…` : firstLine;
 }
 
 export function createNote() {

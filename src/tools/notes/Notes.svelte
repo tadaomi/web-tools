@@ -27,11 +27,7 @@
 
 <div class="notes">
   {#if sidebarOpen}
-    <div
-      class="overlay"
-      onclick={() => (sidebarOpen = false)}
-      role="presentation"
-    ></div>
+    <div class="overlay" onclick={() => (sidebarOpen = false)} role="presentation"></div>
   {/if}
 
   <aside class="sidebar" class:open={sidebarOpen}>
@@ -40,11 +36,9 @@
 
   <section class="editor-pane">
     <div class="editor-bar">
-      <button
-        class="menu-btn"
-        onclick={() => (sidebarOpen = true)}
-        aria-label="メモ一覧を開く"
-      >☰</button>
+      <button class="menu-btn" onclick={() => (sidebarOpen = true)} aria-label="メモ一覧を開く"
+        >☰</button
+      >
       <span class="editor-title">{active ? deriveTitle(active.content) : ''}</span>
       <span class="save-hint">{charCount} 文字 ・ 自動保存</span>
     </div>

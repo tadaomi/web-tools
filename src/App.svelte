@@ -5,9 +5,7 @@
   import { tools } from './lib/registry.js';
 
   const route = $derived(getRoute());
-  const activeTool = $derived(
-    route !== '/' ? tools.find((t) => `/${t.id}` === route) : null,
-  );
+  const activeTool = $derived(route !== '/' ? tools.find((t) => `/${t.id}` === route) : null);
 </script>
 
 <Header />
