@@ -1,7 +1,7 @@
 <script>
   import NoteList from './NoteList.svelte';
   import NoteEditor from './NoteEditor.svelte';
-  import { notesState, selectNote, createNote, deriveTitle } from './notes.svelte.js';
+  import { notesState, selectNote, createNote, displayTitle } from './notes.svelte.js';
 
   // モバイルでのサイドバー（ドロワー）開閉state。
   let sidebarOpen = $state(false);
@@ -39,7 +39,7 @@
       <button class="menu-btn" onclick={() => (sidebarOpen = true)} aria-label="メモ一覧を開く"
         >☰</button
       >
-      <span class="editor-title">{active ? deriveTitle(active.content) : ''}</span>
+      <span class="editor-title">{active ? displayTitle(active) : ''}</span>
       <span class="save-hint">{charCount} 文字 ・ 自動保存</span>
     </div>
 

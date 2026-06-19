@@ -1,5 +1,5 @@
 <script>
-  import { notesState, deleteNote, deriveTitle } from './notes.svelte.js';
+  import { notesState, deleteNote, displayTitle } from './notes.svelte.js';
 
   let { onselect, oncreate } = $props();
 
@@ -36,11 +36,31 @@
   <button class="new-btn" onclick={oncreate}>＋ 新規</button>
 </div>
 
+<div class="search-bar">
+  <input
+    class="search-input"
+    type="search"
+    bind:value={notesState.query}
+    placeholder="メモを検索…"
+    aria-label="メモを検索"
+    spellcheck="false"
+    autocomplete="off"
+  />
+  {#if notesState.query}
+    <button
+      class="search-clear"
+      onclick={() => (notesState.query = '')}
+      aria-label="検索をクリア"
+      title="クリア">×</button
+    >
+  {/if}
+</div>
+
 <ul class="note-list">
-  {#each notesState.sorted as note (note.id)}
+  {#each notesState.filteredSorted as note (note.id)}
     <li class="note-row" class:active={note.id === notesState.activeId}>
       <button class="note-item" onclick={() => onselect(note.id)}>
-        <span class="note-title">{deriveTitle(note.content)}</span>
+        <span class="note-title">{displayTitle(note)}</span>
         <span class="note-sub">
           <span class="note-date">{formatDate(note.updatedAt)}</span>
           <span class="note-snippet">{snippet(note.content)}</span>
@@ -52,6 +72,10 @@
         aria-label="削除"
         title="削除">×</button
       >
+    </li>
+  {:else}
+    <li class="note-empty">
+      {notesState.query ? '該当するメモがありません' : 'メモがありません'}
     </li>
   {/each}
 </ul>
@@ -81,6 +105,46 @@
     border-color: var(--accent);
   }
 
+  .search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.85rem 0.6rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .search-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.4rem 1.8rem 0.4rem 0.6rem; /* 右はクリアボタン分の余白 */
+    font-size: 0.85rem;
+    font-family: var(--font);
+    outline: none;
+  }
+  .search-input:focus {
+    border-color: var(--accent);
+  }
+  .search-input::placeholder {
+    color: var(--text-muted);
+  }
+  .search-clear {
+    position: absolute;
+    right: 1.1rem;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0 0.3rem;
+    cursor: pointer;
+  }
+  .search-clear:hover {
+    color: var(--text);
+  }
+
   .note-list {
     list-style: none;
     margin: 0;
@@ -100,6 +164,13 @@
   .note-row.active {
     background: var(--surface);
     outline: 1px solid var(--accent);
+  }
+
+  .note-empty {
+    padding: 1.2rem 0.6rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
   }
 
   .note-item {
