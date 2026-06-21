@@ -1,11 +1,12 @@
 # Web便利ツール
 
-気軽に使える、軽量なWeb便利ツール集。最初のツールはシンプルなメモ帳です。
-すべてブラウザ内で完結し、バックエンドはありません（データは `localStorage` に保存）。
+気軽に使える、軽量なWeb便利ツール集。シンプルなメモ帳と、PDFの分割・結合・圧縮ツールを収録しています。
+すべてブラウザ内で完結し、バックエンドはありません（メモは `localStorage` に保存。PDFファイルはサーバーに送信されません）。
 
 ## 技術スタック
 
 - [Vite](https://vite.dev/) + [Svelte 5](https://svelte.dev/)（runes: `$state` / `$derived` / `$effect`）
+- PDF処理: [pdf-lib](https://pdf-lib.js.org/)（分割・結合）/ [pdf.js](https://mozilla.github.io/pdf.js/)（圧縮時のページ描画）。いずれも完全クライアントサイドで動作
 - 依存ゼロの最小ハッシュルーター（`#/<tool-id>`）
 - 静的ホスティング向け（ビルド成果物は `dist/`）
 - Lint: [ESLint](https://eslint.org/) + [eslint-plugin-svelte](https://sveltejs.github.io/eslint-plugin-svelte/) / Format: [Prettier](https://prettier.io/) + prettier-plugin-svelte
@@ -55,6 +56,19 @@ src/
       notes.svelte.js      # 状態（$state）+ 操作関数 + 永続化
       NoteList.svelte      # 一覧（サイドバー / モバイルはドロワー）
       NoteEditor.svelte    # 本文エディタ（textarea）
+    pdf/                   # PDFツール（分割・結合・圧縮 / 1ディレクトリ完結）
+      Pdf.svelte           # タブシェル（分割 / 結合 / 圧縮の切替）
+      pdf.svelte.js        # 軽量UI状態の永続化（タブ・圧縮設定。PDF本体は保存しない）
+      FileDropZone.svelte  # 共通のD&D + ファイル選択
+      SplitTab.svelte      # 分割（範囲指定 / 全ページ個別）
+      MergeTab.svelte      # 結合（並び替え + 結合）
+      CompressTab.svelte   # 圧縮（画像再圧縮 + 進捗表示）
+      lib/                 # rune非依存の純ロジック
+        fileutil.js        # File変換・サイズ整形・ページ範囲パース
+        pdfio.js           # pdf-lib による分割・結合
+        pdfjs.js           # pdf.js の遅延ロード + worker設定
+        compress.js        # ページ描画→JPEG化→再構成による圧縮
+        download.js        # Blob によるダウンロード
 ```
 
 ## ツールの追加方法
@@ -83,6 +97,8 @@ web-tools:<tool>:<key>:v1
 ```
 
 例（メモ）: `web-tools:notes:notes:v1`（メモ配列）、`web-tools:notes:activeId:v1`（選択中ID）
+例（PDF）: `web-tools:pdf:activeTab:v1`（選択中タブ）、`web-tools:pdf:compressQuality:v1` / `web-tools:pdf:compressScale:v1`（圧縮設定）
+※ PDFファイル本体は容量・プライバシーの観点から `localStorage` に保存せず、セッション中のみメモリ上に保持します。
 
 ## デプロイ
 
