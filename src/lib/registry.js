@@ -14,4 +14,11 @@ export const tools = [
     icon: '📝',
     load: () => import('../tools/notes/Notes.svelte'),
   },
+  {
+    id: 'pdf',
+    title: 'PDFツール',
+    description: 'PDFの分割・結合・圧縮をブラウザ内で。アップロードなし。',
+    icon: '📄',
+    load: () => import('../tools/pdf/Pdf.svelte'),
+  },
 ];
