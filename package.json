@@ -10,7 +10,8 @@
     "build:gh": "vite build --base=/web-tools/",
     "preview": "vite preview",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "node --test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -26,6 +27,7 @@
     "vite": "^8.0.16"
   },
   "dependencies": {
+    "fflate": "^0.8.3",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "5.4.530"
   }
