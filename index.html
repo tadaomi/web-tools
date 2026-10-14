@@ -8,6 +8,16 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧰</text></svg>"
     />
     <title>Web便利ツール</title>
+    <script>
+      // 保存された配色を描画前に反映し、読み込み直後のちらつきを防ぐ。
+      // キーは src/lib/theme.svelte.js と共有している。
+      try {
+        const t = JSON.parse(localStorage.getItem('web-tools:app:theme:v1'));
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch {
+        // 読めなければ OS の設定に従う
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

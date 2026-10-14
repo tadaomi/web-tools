@@ -1,35 +1,35 @@
-/* ===== テーマ変数（ライト） ===== */
+/* ===== 配色の切り替え =====
+ * 通常は OS の設定に従う（color-scheme: light dark）。
+ * ヘッダーのボタンで選ぶと <html data-theme="light|dark"> が付き、その配色に固定する
+ * （src/lib/theme.svelte.js）。color-scheme はフォーム部品やスクロールバーの配色にも効く。 */
 :root {
-  --bg: #f7f7f8;
-  --surface: #ffffff;
-  --surface-2: #f1f1f3;
-  --border: #e3e3e7;
-  --text: #1d1d1f;
-  --text-muted: #6e6e73;
-  --accent: #2563eb;
+  color-scheme: light dark;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* ===== テーマ変数（light-dark(ライト, ダーク)） ===== */
+:root {
+  --bg: light-dark(#f7f7f8, #1c1c1e);
+  --surface: light-dark(#ffffff, #2c2c2e);
+  --surface-2: light-dark(#f1f1f3, #242426);
+  --border: light-dark(#e3e3e7, #3a3a3c);
+  --text: light-dark(#1d1d1f, #f5f5f7);
+  --text-muted: light-dark(#6e6e73, #98989d);
+  --accent: light-dark(#2563eb, #0a84ff);
   --accent-contrast: #ffffff;
-  --danger: #dc2626;
+  --danger: light-dark(#dc2626, #ff453a);
   --radius: 10px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow:
+    0 1px 3px light-dark(rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.35)),
+    0 1px 2px light-dark(rgba(0, 0, 0, 0.04), transparent);
   --font:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN',
     'Noto Sans JP', Meiryo, sans-serif;
-}
-
-/* ===== ダークモード（OS設定に追従） ===== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1c1c1e;
-    --surface: #2c2c2e;
-    --surface-2: #242426;
-    --border: #3a3a3c;
-    --text: #f5f5f7;
-    --text-muted: #98989d;
-    --accent: #0a84ff;
-    --accent-contrast: #ffffff;
-    --danger: #ff453a;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-  }
 }
 
 /* ===== ベース ===== */
