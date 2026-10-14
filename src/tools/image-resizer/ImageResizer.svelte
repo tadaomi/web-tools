@@ -29,6 +29,7 @@
     source !== null &&
       lastRun !== null &&
       !busy &&
+      !zipping &&
       JSON.stringify(current) !== JSON.stringify(lastRun),
   );
   const succeeded = $derived(results.filter((r) => r.ok));
@@ -38,6 +39,8 @@
   const progressPct = $derived(
     progress.total > 0 ? Math.round((progress.current / progress.total) * 100) : 0,
   );
+  // 処理中・ZIP作成中は、結果や入力を入れ替える操作をすべて止める。
+  const locked = $derived(busy || zipping);
 
   // プレビュー用の Object URL を解放する。
   function revokeUrls(list) {
@@ -96,7 +99,7 @@
   }
 
   async function run() {
-    if (!source || busy) return;
+    if (!source || busy || zipping) return;
     busy = true;
     error = '';
     clearResults();
@@ -118,6 +121,7 @@
   }
 
   function reset() {
+    if (busy || zipping) return;
     clearResults();
     source = null;
     error = '';
@@ -128,12 +132,12 @@
     if (busy || zipping || succeeded.length === 0) return;
     zipping = true;
     error = '';
+    // await の後で source / lastRun を読まないよう、対象とファイル名を先に確定させる。
+    const files = succeeded.map((r) => ({ path: r.outPath, blob: r.blob }));
+    const filename = zipOutputName(source.zipName, lastRun.size);
     try {
-      const bytes = await buildZip(succeeded.map((r) => ({ path: r.outPath, blob: r.blob })));
-      downloadBlob(
-        new Blob([bytes], { type: 'application/zip' }),
-        zipOutputName(source.zipName, lastRun.size),
-      );
+      const bytes = await buildZip(files);
+      downloadBlob(new Blob([bytes], { type: 'application/zip' }), filename);
     } catch {
       error = 'ZIPの作成に失敗しました。';
     } finally {
@@ -180,7 +184,7 @@
     <p>設定を変えたあとは「再処理」を押せば、ファイルを入れ直さずに作り直せます。</p>
   </details>
 
-  <SettingsPanel disabled={busy} />
+  <SettingsPanel disabled={locked} />
 
   {#if source}
     <div class="file-bar">
@@ -188,7 +192,7 @@
       <span class="file-meta">
         画像 {source.entries.length} 件{#if source.skipped > 0}（除外 {source.skipped} 件）{/if}
       </span>
-      <button class="link-btn" onclick={reset} disabled={busy}>別のファイル</button>
+      <button class="link-btn" onclick={reset} disabled={locked}>別のファイル</button>
     </div>
   {:else}
     <DropZone disabled={busy} onfiles={handleFiles} />
