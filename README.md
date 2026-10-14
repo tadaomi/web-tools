@@ -1,12 +1,13 @@
 # Web便利ツール
 
-気軽に使える、軽量なWeb便利ツール集。シンプルなメモ帳と、PDFの分割・結合・圧縮ツールを収録しています。
-すべてブラウザ内で完結し、バックエンドはありません（メモは `localStorage` に保存。PDFファイルはサーバーに送信されません）。
+気軽に使える、軽量なWeb便利ツール集。シンプルなメモ帳、PDFの分割・結合・圧縮ツール、画像の一括リサイズツールを収録しています。
+すべてブラウザ内で完結し、バックエンドはありません（メモは `localStorage` に保存。PDF・画像ファイルはサーバーに送信されません）。
 
 ## 技術スタック
 
 - [Vite](https://vite.dev/) + [Svelte 5](https://svelte.dev/)（runes: `$state` / `$derived` / `$effect`）
 - PDF処理: [pdf-lib](https://pdf-lib.js.org/)（分割・結合）/ [pdf.js](https://mozilla.github.io/pdf.js/)（圧縮時のページ描画）。いずれも完全クライアントサイドで動作
+- 画像処理: Canvas（`createImageBitmap`）によるリサイズ / [fflate](https://github.com/101arrowz/fflate)（ZIP の展開・作成）。完全クライアントサイドで動作
 - 依存ゼロの最小ハッシュルーター（`#/<tool-id>`）
 - 静的ホスティング向け（ビルド成果物は `dist/`）
 - Lint: [ESLint](https://eslint.org/) + [eslint-plugin-svelte](https://sveltejs.github.io/eslint-plugin-svelte/) / Format: [Prettier](https://prettier.io/) + prettier-plugin-svelte
@@ -16,6 +17,7 @@
 ```bash
 npm install      # 依存インストール
 npm run dev      # 開発サーバ（http://localhost:5173）
+npm test         # テスト（Node 標準の node --test。*.test.js を実行）
 npm run build    # 本番ビルド → dist/
 npm run preview  # ビルド成果物をローカル確認
 ```
@@ -69,6 +71,23 @@ src/
         pdfjs.js           # pdf.js の遅延ロード + worker設定
         compress.js        # ページ描画→JPEG化→再構成による圧縮
         download.js        # Blob によるダウンロード
+    image-resizer/         # 画像リサイズ（ZIP / 画像の一括リサイズ / 1ディレクトリ完結）
+      ImageResizer.svelte  # 全体の枠と処理の制御（投入 → 処理 → 結果 → 再処理）
+      imageResizer.svelte.js # 設定の永続化（画像そのものは保存しない）
+      SettingsPanel.svelte # 基準サイズ・向きごとのルール・出力形式・ファイル名の設定
+      DropZone.svelte      # ZIP と画像の D&D + ファイル選択
+      ResultGallery.svelte # 結果のカード一覧（プレビュー・個別保存・失敗の表示）
+      lib/                 # rune非依存の純ロジック（*.test.js は node --test で実行）
+        settings.js        # 設定の既定値・検証・正規化
+        dimensions.js      # 出力サイズと切り抜き範囲の計算
+        naming.js          # 出力ファイル名・拡張子・重複回避・並べ替え
+        filename.js        # ZIP 内の Shift_JIS ファイル名の救済
+        zipio.js           # fflate の遅延ロード・ZIP の展開と作成
+        input.js           # 投入ファイルの種類の判定
+        format.js          # サイズ表示の整形
+        process.js         # 1枚ずつの一括処理
+        resize.js          # Canvas による段階的な縮小（ブラウザ専用）
+        download.js        # Blob によるダウンロード
 ```
 
 ## ツールの追加方法
@@ -99,6 +118,8 @@ web-tools:<tool>:<key>:v1
 例（メモ）: `web-tools:notes:notes:v1`（メモ配列）、`web-tools:notes:activeId:v1`（選択中ID）
 例（PDF）: `web-tools:pdf:activeTab:v1`（選択中タブ）、`web-tools:pdf:compressQuality:v1` / `web-tools:pdf:compressScale:v1`（圧縮設定）
 ※ PDFファイル本体は容量・プライバシーの観点から `localStorage` に保存せず、セッション中のみメモリ上に保持します。
+例（画像リサイズ）: `web-tools:image-resizer:settings:v1`（設定一式）
+※ 画像ファイル本体も同様に保存せず、セッション中のみメモリ上に保持します。
 
 ## デプロイ
 
