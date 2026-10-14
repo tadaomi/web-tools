@@ -44,11 +44,13 @@ npm run format   # Prettier による自動整形（prettier --write）
 src/
   main.js                  # エントリ（Svelte 5 の mount）
   App.svelte               # レイアウト（ヘッダー + ハッシュルーター）
-  app.css                  # 全体の最小スタイル + CSS変数（テーマ/ダークモード）
+  app.css                  # 全体の最小スタイル + CSS変数（light-dark() によるライト/ダーク配色）
   lib/
     registry.js            # ツールの単一レジストリ（一覧・ルーティングの元）
     router.svelte.js       # 最小ハッシュルーター
     persisted.svelte.js    # localStorage 永続化ヘルパ（全ツール共用）
+    theme.js               # 配色の決定ロジック（OS設定 / 手動選択）
+    theme.svelte.js        # 配色の状態（保存・OS設定の監視・<html data-theme> への反映）
   components/
     Header.svelte          # 共通ヘッダー
     Home.svelte            # ツール一覧（トップ）
@@ -115,6 +117,7 @@ src/
 web-tools:<tool>:<key>:v1
 ```
 
+例（共通）: `web-tools:app:theme:v1`（配色 `"light"` / `"dark"`。未保存なら OS の設定に従う。ヘッダー右端のボタンで切り替え）
 例（メモ）: `web-tools:notes:notes:v1`（メモ配列）、`web-tools:notes:activeId:v1`（選択中ID）
 例（PDF）: `web-tools:pdf:activeTab:v1`（選択中タブ）、`web-tools:pdf:compressQuality:v1` / `web-tools:pdf:compressScale:v1`（圧縮設定）
 ※ PDFファイル本体は容量・プライバシーの観点から `localStorage` に保存せず、セッション中のみメモリ上に保持します。
