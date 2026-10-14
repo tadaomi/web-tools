@@ -21,4 +21,11 @@ export const tools = [
     icon: '📄',
     load: () => import('../tools/pdf/Pdf.svelte'),
   },
+  {
+    id: 'image-resizer',
+    title: '画像リサイズ',
+    description: 'ZIPや画像をまとめてリサイズ。CMSサムネイル作成に。アップロードなし。',
+    icon: '🖼️',
+    load: () => import('../tools/image-resizer/ImageResizer.svelte'),
+  },
 ];
